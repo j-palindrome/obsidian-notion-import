@@ -1,21 +1,16 @@
+import _ from 'lodash'
+import { DateTime } from 'luxon'
 import {
   App,
-  DropdownComponent,
+  Menu,
   Modal,
+  Notice,
   Plugin,
-  PluginSettingTab,
   Setting,
+  TAbstractFile,
   TFile,
   TFolder,
-  FileManager,
-  Menu,
-  TAbstractFile,
-  Notice,
 } from 'obsidian'
-import _ from 'lodash'
-import { parse } from 'csv-parse/sync'
-import { DateTime } from 'luxon'
-import { log } from 'console'
 
 export default class NotionImport extends Plugin {
   onload() {
