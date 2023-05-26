@@ -16,8 +16,6 @@ export default class NotionImport extends Plugin {
   onload() {
     this.registerEvent(
       app.workspace.on('file-menu', (menu: Menu, file: TAbstractFile) => {
-        console.log('file')
-
         if (!(file instanceof TFolder)) return
 
         menu.addItem((item) => {
@@ -86,7 +84,7 @@ class ImportOptions extends Modal {
       .getAllLoadedFiles()
       .filter(
         (file) =>
-          file.path.startsWith(this.targetDirectory.replace('.csv', '')) &&
+          file.path.startsWith(this.targetDirectory) &&
           file.path.endsWith('.md') &&
           this.isNotionId(file.path)
       )
@@ -176,11 +174,8 @@ class ImportOptions extends Modal {
                     return idsToTitles[notionId]
                   })
                   propertyMap[title] = relationProp
-                    .map((x) => `\n  - "[[${x}]]"`)
-                    .join('')
-                  listedProperties[title] = relationProp
-                    .map((x) => '- [[' + x + ']]')
-                    .join('\n')
+                    .map((x) => `[[${x}]]`)
+                    .join(', ')
                 } else {
                   // inline links
                   const matches = prop
@@ -193,8 +188,7 @@ class ImportOptions extends Modal {
                       if (!id || !idsToTitles[id]) continue
                       prop = prop.replace(match, '[[' + idsToTitles[id] + ']]')
                     }
-                    if (this.keepLinkMetadata) propertyMap[title] = `"${prop}"`
-                    listedProperties[title] = '- ' + prop
+                    listedProperties[title] = prop
                   } else if (
                     /^([a-zA-Z0-9 ]+(, |$))+$/.test(prop) &&
                     this.addTags
@@ -212,7 +206,7 @@ class ImportOptions extends Modal {
                     )
                     if (thisTags.length > 1)
                       propertyMap[title] = thisTags
-                        .map((tag) => `\n  - ${tag}`)
+                        .map((tag) => `${tag}`)
                         .join('')
                     else if (thisTags.length === 1)
                       propertyMap[title] = thisTags[0]
@@ -222,6 +216,9 @@ class ImportOptions extends Modal {
                   }
                 }
               })
+
+              if (this.addTags && tags.length > 0)
+                propertyMap['tags'] = '[' + tags.join(', ') + ']'
 
               const newText =
                 (_.keys(propertyMap).length > 0
@@ -233,11 +230,8 @@ class ImportOptions extends Modal {
                   : '') +
                 (_.keys(listedProperties).length > 0
                   ? _.entries(listedProperties)
-                      .map(([key, value]) => key + ':\n' + value)
-                      .join('\n\n') + '\n\n'
-                  : '') +
-                (tags.length > 0
-                  ? `Tags: ${tags.map((tag) => '#' + tag).join(' ')}\n\n`
+                      .map(([key, value]) => key + ':: ' + value)
+                      .join(', ') + '\n'
                   : '') +
                 content
               const newTitle = (file.parent?.path ?? '') + '/' + title + '.md'

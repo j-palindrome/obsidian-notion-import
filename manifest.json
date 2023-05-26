@@ -1,0 +1,11 @@
+{
+  "id": "obsidian-notion-import",
+  "name": "Notion Import",
+  "version": "0.1.0",
+  "minAppVersion": "0.15.0",
+  "description": "Convert exported Notion databases into Obsidian syntax and links.",
+  "author": "Joshua Reinier",
+  "authorUrl": "https://joshuareinier.com",
+  "fundingUrl": "https://joshuareinier.com",
+  "isDesktopOnly": false
+}
