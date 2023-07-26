@@ -11,86 +11,63 @@ if you want to view the source, please visit the github repository of this plugi
 */
 `
 
-const DIR = '.'
-if (!DIR) throw new Error('plugin id missing')
-const TARGET_DIRS = {
-	views: '_config/views',
-	plugins: '.obsidian/plugins',
-}
-const VAULT = 'Joshua'
+const VAULT = 'TEST'
 const USER = 'jreinier'
-const TYPE = DIR.match(/(.*)\//)?.[1]
-const TARGET_DIR = TARGET_DIRS[TYPE]
-const PLUGIN_DIR = DIR.match(/\/(.*?)$/)?.[1]
-
-if (!TARGET_DIR)
-	throw new Error(
-		'plugin parent directory missing (must be "views/" or "plugins/")'
-	)
-if (!PLUGIN_DIR) throw new Error('invalid plugin directory')
 const MODE = process.env.MODE
-const NO_CSS = process.env.NO_CSS
-
-let entryPoints
-if (DIR.startsWith('views/')) {
-	entryPoints = [`src/${DIR}/src/view.ts`]
-	if (!NO_CSS) entryPoints.push(`src/${DIR}/src/view.css`)
-} else if (DIR.startsWith('plugins/')) {
-	entryPoints = [`src/${DIR}/src/main.ts`]
-	if (!NO_CSS) entryPoints.push(`src/${DIR}/src/styles.css`)
-} else throw new Error('path does not start with "views/" or "plugins/"')
+const entryPoints = [`src/main.ts`]
+const TARGET_DIR = '.obsidian'
+const PLUGIN_DIR = 'notion-import'
 
 const plugins = [
-	postcss(),
-	esbuildCopyStaticFiles({
-		src: `./dist/${PLUGIN_DIR}`,
-		dest: `/Users/${USER}/Library/Mobile Documents/iCloud~md~obsidian/Documents/${VAULT}/${TARGET_DIR}/${PLUGIN_DIR}`,
-		dereference: true,
-		errorOnExist: false,
-		preserveTimestamps: true,
-	}),
+  postcss(),
+  esbuildCopyStaticFiles({
+    src: `dist`,
+    dest: `/Users/${USER}/Library/Mobile Documents/iCloud~md~obsidian/Documents/${VAULT}/${TARGET_DIR}/plugins/${PLUGIN_DIR}`,
+    dereference: true,
+    errorOnExist: false,
+    preserveTimestamps: true,
+  }),
 ]
 
 const context = await esbuild.context({
-	banner: {
-		js: banner,
-	},
-	entryPoints,
-	bundle: true,
-	external: [
-		'obsidian',
-		'electron',
-		'@codemirror/autocomplete',
-		'@codemirror/collab',
-		'@codemirror/commands',
-		'@codemirror/language',
-		'@codemirror/lint',
-		'@codemirror/search',
-		'@codemirror/state',
-		'@codemirror/view',
-		'@lezer/common',
-		'@lezer/highlight',
-		'@lezer/lr',
-		...builtins,
-	],
-	format: 'cjs',
-	target: 'es2018',
-	logLevel: 'info',
-	sourcemap: MODE === 'production' ? false : 'inline',
-	treeShaking: true,
-	outdir: `dist/${PLUGIN_DIR}`,
-
-	loader: {
-		'.mp3': 'dataurl',
-		'.svg': 'text',
-		'.png': 'dataurl',
-	},
-	plugins,
+  banner: {
+    js: banner,
+  },
+  entryPoints,
+  bundle: true,
+  external: [
+    'obsidian',
+    'electron',
+    '@codemirror/autocomplete',
+    '@codemirror/collab',
+    '@codemirror/commands',
+    '@codemirror/language',
+    '@codemirror/lint',
+    '@codemirror/search',
+    '@codemirror/state',
+    '@codemirror/view',
+    '@lezer/common',
+    '@lezer/highlight',
+    '@lezer/lr',
+    ...builtins,
+  ],
+  format: 'cjs',
+  target: 'es2018',
+  logLevel: 'info',
+  sourcemap: MODE === 'production' ? false : 'inline',
+  treeShaking: true,
+  outdir: `dist`,
+  loader: {
+    '.mp3': 'dataurl',
+    '.svg': 'text',
+    '.png': 'dataurl',
+  },
+  plugins,
 })
 
 if (MODE === 'production') {
-	await context.rebuild()
-	process.exit(0)
+  await context.rebuild()
+  process.exit(0)
 } else {
-	await context.watch()
+  await context.watch()
 }

@@ -1,4 +1,5 @@
 {
+<<<<<<< HEAD
   "compilerOptions": {
     "baseUrl": ".",
     "inlineSourceMap": true,
@@ -18,4 +19,8 @@
     "jsxImportSource": "react"
   },
   "include": ["src"]
+=======
+  "extends": "../../../tsconfig.json",
+  "include": ["src", "/packages"]
+>>>>>>> 4198227 (synced wth monorepo)
 }
