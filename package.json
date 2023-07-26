@@ -1,5 +1,4 @@
 {
-<<<<<<< HEAD
 	"name": "obsidian-notion-import",
 	"version": "1.0.0",
 	"description": "Import Notion Markdown syntax to current folders.",
@@ -33,14 +32,4 @@
 		"luxon": "^3.3.0",
 		"papaparse": "^5.4.1"
 	}
-=======
-  "name": "obsidian-notion-import",
-  "version": "1.0.0",
-  "description": "Notion Import",
-  "main": "main.js",
-  "scripts": {},
-  "keywords": [],
-  "author": "",
-  "license": "MIT"
->>>>>>> 4198227 (synced wth monorepo)
 }
